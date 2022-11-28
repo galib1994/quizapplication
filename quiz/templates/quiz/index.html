@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+  <title>Chat App</title>
+</head>
+
+<body>
+  <h1>
+
+  </h1>
+
+  <div class="row">
+    <div class="col-lg-6">
+        <table class="table">
+            <thead class="thead-dark">
+              <tr>
+                <th scope="col">Name</th>
+                <th scope="col">Gender</th>
+                <th scope="col">Discription</th>
+                <th scope="col">Image</th>
+              </tr>
+            </thead>
+            <tbody>
+                {% for f in data %}
+              <tr>
+                <th scope="row">{{f.name}}</th>
+                <td>{{f.gender}}</td>
+                <td>{{f.discription}}</td>
+                <td>
+                    <a href="/media/{{f.query_image}}" download ><img src="/media/{{f.query_image}}" alt="IMG-PRODUCT" height="50" width="100"></a>
+                    </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+    </div>
+    <div class="col-lg-4">
+        <div>
+            {% comment %} <div class="social">
+                <a href="{% url "social:begin" "google-oauth2" %}">Sign in with google</a>
+            </div> {% endcomment %}
+            <form class="nav-link form-inline mt-2 mt-md-0" method="post">
+                {% csrf_token %}
+                <div class="input-group">
+                <input type="search" name='search' class="form-control" placeholder="Search..." aria-label="search" aria-describedby="search">
+                <div class="input-group-prepend">
+                    <button class="input-group-text" type="submit" name="btnform1">
+                    <i class="typcn typcn-zoom"></i>
+                    </button>
+                </div>
+                </div>
+            </form>
+
+            <form>
+                <div class="form-group">
+                  <label for="exampleInputEmail1">Name</label>
+                  <input type="name" class="form-control" id="username" aria-describedby="name" placeholder="Enter Name">
+                </div>
+                <div class="form-group">
+                  <label for="exampleInputPassword1">Gender</label>
+                  <input type="gender" class="form-control" id="gender" placeholder="Enter Gender">
+                </div>
+                <div class="form-group">
+                  <label for="exampleInputPassword1">Discription</label>
+                  <input type="Discription" class="form-control" id="description" placeholder="Enter Discription">
+                </div>
+                <div class="form-group">
+                    <label for="exampleFormControlFile1">Example file input</label>
+                    <input type="file" class="form-control-file" id="exampleFormControlFile1">
+                </div>
+                
+                <button type="button" id="chat-message-submit" class="btn btn-primary">Submit</button>
+              </form>
+        </div>
+    </div>
+  </div>
+ 
+ 
+  
+  
+
+  {% comment %} <textarea id="chat-log" cols="100" rows="20">
+    
+  </textarea><br>
+  
+  
+  <input type="name" class="form-control" id="username" aria-describedby="nameHelp" placeholder="Enter name">
+  <input type="name" class="form-control" id="username" aria-describedby="nameHelp" placeholder="Enter name">
+
+
+  <input type="text" id="chat-message-input" size="100"><br>
+  <input type="button" value="Send" id="chat-message-submit">
+  {{groupname|json_script:"group-name"}}  {% endcomment %}
+
+  <script>
+    var ws = new WebSocket(
+      'ws://'
+      + window.location.host
+      + '/ws/sc/'
+    )
+    ws.onopen = function () {
+      console.log('Websocket Connection open...')
+    }
+    ws.onmessage = function (event) {
+      console.log('Message Received from Server...', event.data)
+      console.log('Type of Message Received from Server...', typeof (event.data))
+      const data = JSON.parse(event.data)   // String to Object
+      console.log('Parsed Data...', data)
+      console.log('Type of Parsed Data...', typeof (data))
+      console.log('Actual Message...', data.description)
+      location.reload()
+    }
+    ws.onclose = function (event) {
+      console.error('Websocket Connection closed unexpectedly...');
+    };
+
+    document.getElementById('chat-message-submit').onclick = function (event) {
+      const username = document.getElementById('username').value
+      const gender  = document.getElementById('gender').value
+      const description = document.getElementById('description').value
+      ws.send(JSON.stringify({      // Object to String
+        'description': description,
+        'name':username,
+        'gender':gender,
+      }))
+      
+    }
+  </script>
+</body>
+
+</html>
